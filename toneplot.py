@@ -114,7 +114,6 @@ def plot_wavelength_multiples_for_fraction_sets(fraction_sets: list[set[Fraction
 def plot_wavelength_multiples_for_fractions(ax, fractions, lcm_plot):
     ax.set_xlabel('Wavelength')
     ax.set_ylabel('Original Wavelength')
-    fractions.add(Fraction(1))
     wavelengths = sorted([Fraction(fraction.denominator, fraction.numerator) for fraction in fractions], reverse=True)
     all_multiples = set()
     wavelength_lcm = lcm(*[fraction.numerator for fraction in wavelengths])
@@ -142,7 +141,7 @@ def plot_wavelength_multiples_for_fractions(ax, fractions, lcm_plot):
 if __name__ == '__main__':
     # my_harmonics = [3, 5, 6]
     # plot_undertones_for_harmonics(my_harmonics)
-    my_fractions = [{Fraction(5, 4), Fraction(5, 2), Fraction(2), Fraction(3, 2), Fraction(3)}]
+    my_fractions = [{Fraction(1), Fraction(5, 4), Fraction(3, 2)}, {Fraction(2), Fraction(5, 2), Fraction(3)}]
     plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
     # plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
 
