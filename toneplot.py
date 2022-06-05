@@ -2,6 +2,24 @@ from collections import defaultdict
 from fractions import Fraction
 import matplotlib.pyplot as plt
 from math import lcm
+from math import gcd
+
+C_4 = 261.6256
+TWELVE_TET_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+
+def get_closest_scientific_pitch(fraction, fundamental_frequency=C_4):
+    fraction_as_pitch = fraction * fundamental_frequency
+    smallest_diff = 100000
+    name_number = '-'
+    for n in range(-48, 60):
+        scientific_pitch = C_4 * 2 ** (n / 12)
+        current_diff = abs(fraction_as_pitch - scientific_pitch)
+        if current_diff < smallest_diff:
+            smallest_diff = current_diff
+            name_number = n
+    pitch_name = TWELVE_TET_NAMES[name_number % 12] + f'{4 + name_number // 12}'
+    return fraction, pitch_name, smallest_diff / (C_4 * 2 ** (name_number / 12)), smallest_diff
 
 
 def get_all_notes_with_dissonance_less_than(max_dissonance):
@@ -108,15 +126,14 @@ def plot_wavelength_multiples_for_fraction_sets(fraction_sets: list[set[Fraction
     fig, axs = plt.subplots(len(fraction_sets), 1, layout='constrained', squeeze=False)
     for i in range(len(fraction_sets)):
         plot_wavelength_multiples_for_fractions(axs[i][0], fraction_sets[i], lcm_plot)
-    plt.show()
 
 
 def plot_wavelength_multiples_for_fractions(ax, fractions, lcm_plot):
-    ax.set_xlabel('Wavelength')
-    ax.set_ylabel('Original Wavelength')
     wavelengths = sorted([Fraction(fraction.denominator, fraction.numerator) for fraction in fractions], reverse=True)
+    wavelength_gcd = gcd(*[fraction.denominator for fraction in wavelengths])
+    wavelength_lcm = lcm(*[fraction.numerator for fraction in wavelengths]) / wavelength_gcd
     all_multiples = set()
-    wavelength_lcm = lcm(*[fraction.numerator for fraction in wavelengths])
+
     for wavelength in wavelengths:
         if lcm_plot:
             multiples = int(wavelength_lcm * wavelength.denominator / wavelength.numerator)
@@ -131,19 +148,25 @@ def plot_wavelength_multiples_for_fractions(ax, fractions, lcm_plot):
         bar_heights = [wavelength] * len(current_wavelengths)
         bar_widths = [-wavelength] * len(current_wavelengths)
         ax.bar(current_wavelengths, bar_heights, bar_widths, align='edge', **{'edgecolor': 'black', 'linewidth': 0.5})
+
     x_ticks = sorted(all_multiples) + [0]
     y_ticks = sorted(wavelengths) + [Fraction(0), Fraction(1)]
     ax.set_xticks(x_ticks, x_ticks)
     ax.set_yticks(y_ticks, y_ticks)
+
     ax.margins(0)
+
+    ax.set_xlabel('Wavelength')
+    ax.set_ylabel('Original Wavelength')
 
 
 if __name__ == '__main__':
-    # my_harmonics = [3, 5, 6]
-    # plot_undertones_for_harmonics(my_harmonics)
-    my_fractions = [{Fraction(1), Fraction(5, 4), Fraction(3, 2)}, {Fraction(2), Fraction(5, 2), Fraction(3)}]
-    plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
-    # plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
+    C_major = {Fraction(1), Fraction(5, 4), Fraction(3, 2)}
+    D_major = {Fraction(9, 8), Fraction(9 * 5, 8 * 4), Fraction(9 * 3, 8 * 2)}
+    G_major = {Fraction(3, 2), Fraction(15, 8), Fraction(9, 4)}
 
-    # my_wavelengths = {Fraction(5, 6), Fraction(2, 3)}
-    # print(lcm(*[fraction.numerator for fraction in my_wavelengths]))
+    print(get_closest_scientific_pitch(Fraction(7)))
+
+    my_fractions = [C_major, D_major, G_major, C_major | D_major]
+    # plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
+    # plt.show()
