@@ -131,7 +131,7 @@ def plot_wavelength_multiples_for_fraction_sets(fraction_sets: list[set[Fraction
 def plot_wavelength_multiples_for_fractions(ax, fractions, lcm_plot):
     wavelengths = sorted([Fraction(fraction.denominator, fraction.numerator) for fraction in fractions], reverse=True)
     wavelength_gcd = gcd(*[fraction.denominator for fraction in wavelengths])
-    wavelength_lcm = lcm(*[fraction.numerator for fraction in wavelengths]) / wavelength_gcd
+    wavelength_lcm = lcm(*[fraction.numerator for fraction in wavelengths])  # / wavelength_gcd
     all_multiples = set()
 
     for wavelength in wavelengths:
@@ -161,12 +161,15 @@ def plot_wavelength_multiples_for_fractions(ax, fractions, lcm_plot):
 
 
 if __name__ == '__main__':
-    C_major = {Fraction(1), Fraction(5, 4), Fraction(3, 2)}
-    D_major = {Fraction(9, 8), Fraction(9 * 5, 8 * 4), Fraction(9 * 3, 8 * 2)}
-    G_major = {Fraction(3, 2), Fraction(15, 8), Fraction(9, 4)}
+    C_4_major = {Fraction(1), Fraction(5, 4), Fraction(3, 2)}
+    D_4_major = {Fraction(9, 8), Fraction(9 * 5, 8 * 4), Fraction(9 * 3, 8 * 2)}
+    G_4_major = {Fraction(3, 2), Fraction(15, 8), Fraction(9, 4)}
+    Bb_4_major = {Fraction(7, 4), Fraction(7 * 5, 4 * 4), Fraction(7 * 3, 4 * 2)}
+    Bb_6_major = {Fraction(7, 1), Fraction(7 * 5, 1 * 4), Fraction(7 * 3, 1 * 2)}
 
-    print(get_closest_scientific_pitch(Fraction(7)))
+    # print(get_closest_scientific_pitch(Fraction(7)))
 
-    my_fractions = [C_major, D_major, G_major, C_major | D_major]
-    # plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
-    # plt.show()
+    my_fractions = [C_4_major, {fraction * 2 for fraction in sorted(C_4_major)[1:]} | {Fraction(1)},
+                    {fraction * 3 for fraction in sorted(C_4_major)[1:]} | {Fraction(1)}]
+    plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
+    plt.show()
