@@ -210,22 +210,10 @@ def temp():
 
 
 def temp2():
-    my_fractions = set()
-    for i in range(1, 20):
-        for j in range(1, 20):
-            my_fractions.add(Fraction(i, j))
-
-    my_octave_reduced_fractions = set()
-    for fraction in my_fractions:
-        my_octave_reduced_fractions.add(get_octave_reduction(fraction))
-
-    for fraction in sorted(my_octave_reduced_fractions, key=lambda x: x.numerator):
-        for pair_fraction in get_extended_octave_pair(fraction, [2, 3]):
-            print(get_closest_scientific_pitch(pair_fraction)[:2], end=' ')
-        print()
-
-    # for fraction in sorted(my_octave_reduced_fractions, key=lambda x: x.numerator):
-    # print(fraction, get_closest_scientific_pitch(fraction))
+    overtone_undertones = defaultdict(list)
+    for i in range(1, 10):
+        for j in range(1, i):
+            overtone_undertones[i].append(Fraction(i, j))
 
 
 if __name__ == '__main__':
