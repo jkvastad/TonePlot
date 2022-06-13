@@ -95,6 +95,27 @@ def get_undertones_for_harmonic(harmonic, number_of_undertones):
     return [Fraction(harmonic, i) for i in range(1, number_of_undertones + 1)]
 
 
+def get_octave_reduction(fraction, octave=2):
+    while fraction >= 1:
+        fraction = fraction / octave
+    while fraction < 1:
+        fraction = fraction * octave
+    return fraction
+
+
+def get_octave_pair(fraction, octave=2):
+    fraction = get_octave_reduction(fraction, octave)
+    octave_pair = Fraction(fraction.denominator, fraction.numerator)
+    return fraction, get_octave_reduction(octave_pair, octave)
+
+
+def get_extended_octave_pair(fraction, octaves):
+    extended_octave_pair = set()
+    for octave in octaves:
+        extended_octave_pair.update(get_octave_pair(fraction, octave))
+    return extended_octave_pair
+
+
 def plot_undertones_for_harmonics(harmonics: list[int, ...]):
     fig, ax = plt.subplots(1, 1, layout='constrained')
     ax.set_xlabel('Fraction')
@@ -160,15 +181,40 @@ def plot_wavelength_multiples_for_fractions(ax, fractions, lcm_plot):
     ax.set_ylabel('Original Wavelength')
 
 
-if __name__ == '__main__':
+def temp():
     C_4_major = {Fraction(1), Fraction(5, 4), Fraction(3, 2)}
+    C_5_major = {Fraction(2), Fraction(2 * 5, 4), Fraction(2 * 3, 2)}
+    C_4_minor = {Fraction(1), Fraction(6, 5), Fraction(3, 2)}
     D_4_major = {Fraction(9, 8), Fraction(9 * 5, 8 * 4), Fraction(9 * 3, 8 * 2)}
+    F_4_major = {Fraction(4, 3), Fraction(4 * 5, 3 * 4), Fraction(4 * 3, 3 * 2)}
+    F_3_major = {Fraction(2, 3), Fraction(2 * 5, 3 * 4), Fraction(2 * 3, 3 * 2)}
     G_4_major = {Fraction(3, 2), Fraction(15, 8), Fraction(9, 4)}
     Bb_4_major = {Fraction(7, 4), Fraction(7 * 5, 4 * 4), Fraction(7 * 3, 4 * 2)}
     Bb_6_major = {Fraction(7, 1), Fraction(7 * 5, 1 * 4), Fraction(7 * 3, 1 * 2)}
 
-    # print(get_closest_scientific_pitch(Fraction(7)))
+    my_fractions = set()
+    for i in range(1, 20):
+        for j in range(1, 20):
+            my_fractions.add(Fraction(i, j))
+    output = defaultdict(list)
+    for fraction in my_fractions:
+        data = get_closest_scientific_pitch(fraction)
+        output[data[1]].append(data)
 
-    my_fractions = [C_4_major, {fraction * 3 for fraction in C_4_major}]
-    plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
-    plt.show()
+    for data in sorted(output.items()):
+        print(data[0], sorted(data[1], key=lambda x: x[2]))
+
+    my_fractions = [{Fraction(1)}]
+    # plot_wavelength_multiples_for_fraction_sets(my_fractions, lcm_plot=True)
+    # plt.show()
+
+
+def temp2():
+    overtone_undertones = defaultdict(list)
+    for i in range(1, 10):
+        for j in range(1, i):
+            overtone_undertones[i].append(Fraction(i, j))
+
+
+if __name__ == '__main__':
+    temp2()
