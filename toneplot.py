@@ -360,6 +360,10 @@ def plot_undertones(fractions: list[Fraction, ...], number_of_overtones: list[in
     ax.set_xlabel('Wavelength')
     ax.set_ylabel('Original Wavelength')
     ax.margins(0)
+    title = ""
+    for fraction in [f"{fraction.numerator}/{fraction.denominator}" for fraction in fractions]:
+        title += fraction + ', '
+    ax.set_title(title[:-2])
 
 
 if __name__ == '__main__':
@@ -375,7 +379,14 @@ if __name__ == '__main__':
     # for i in range(1, 10):
     #    for j in range(1, 10):
     #        print(get_closest_scientific_pitch(Fraction(i, j)))
-    my_fractions = [Fraction(1), Fraction(3, 2)]
-    my_number_of_overtones = [3, 3]
+    print(get_closest_scientific_pitch(Fraction(9, 8)))
+    my_fractions = [Fraction(1), Fraction(9, 8)]
+    my_number_of_overtones = [7] * len(my_fractions)
     plot_undertones(my_fractions, my_number_of_overtones)
+
+    print(get_closest_scientific_pitch(Fraction(8, 7)))
+    my_fractions = [Fraction(1), Fraction(8, 7)]
+    my_number_of_overtones = [7] * len(my_fractions)
+    plot_undertones(my_fractions, my_number_of_overtones)
+
     plt.show()
